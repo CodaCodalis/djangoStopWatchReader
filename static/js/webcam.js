@@ -43,7 +43,10 @@ captureImageBtn.addEventListener('click', function () {
             let response = JSON.parse(xhr.responseText);
             let resultTXT = document.getElementById('result-text');
             resultTXT.innerHTML = response.result;
+            let image = document.createElement('img');
+            image.src = 'data:image/jpeg;base64,' + response.image;
             let resultIMG = document.getElementById('result-image');
+            resultIMG.appendChild(image);
             let resultDiv = document.getElementById('result');
             resultDiv.style.display = 'block';
         } else {
