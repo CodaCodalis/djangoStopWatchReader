@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <h1>WebCamReader</h1>
+
+    <div class="main">
+      <div class="video-container">
+        <video id="video" width="640" height="480"></video>
+        <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
+        <img id="image" width="640" height="480" style="display: none;">
+        <div class="overlay" style="display: none;"></div>
+      </div>
+      <div style="display:flex">
+          <button id="start-webcam" class="btn btn-danger">Start Webcam</button>
+          <button id="take-picture" class="btn btn-danger">Take Picture</button>
+          <button id="stop-webcam" class="btn btn-danger" style="display: none;">Stop Webcam</button>
+      </div>
+    </div>
+    <script src="{% static 'js/webcam.js' %}"></script>
+
+{% endblock content %}
