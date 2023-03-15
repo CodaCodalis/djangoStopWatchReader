@@ -1,8 +1,9 @@
 import base64
 from io import BytesIO
 
+from django.shortcuts import render
 from django.views.generic import TemplateView
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from PIL import Image
 from .utils import prepare, analyze
 
@@ -26,19 +27,11 @@ class YoloView(TemplateView):
 def upload_image(request):
     if request.method == 'POST' and request.FILES.get('image'):
         image = request.FILES['image']
-        # save image to file system
-        # image = Image.open(image)
-        # if image.mode == 'RGBA':
-        #     image = image.convert('RGB')
-
         cropped_image = prepare(image)
         text = analyze(cropped_image)
-        # image.save('static/resources/image.jpg')
-        # print(text)
 
-        cropped_image = Image.fromarray(cropped_image)
-        # cropped_image.save('static/resources/image.jpg')
         # decode image to base64
+        cropped_image = Image.fromarray(cropped_image)
         cropped_image_bytes = BytesIO()
         cropped_image.save(cropped_image_bytes, format='JPEG')
         cropped_image_base64 = base64.b64encode(cropped_image_bytes.getvalue()).decode('utf-8')
@@ -49,3 +42,27 @@ def upload_image(request):
                              })
     else:
         return JsonResponse({'success': False})
+
+
+def upload_file(request):
+    if request.method == 'POST':
+        file = request.FILES['file']
+        file_name = file.name
+        file_size = file.size
+
+        # process image
+
+        return HttpResponse('File uploaded successfully: ' + file_name + ' (' + str(file_size) + ' bytes)')
+    return render(request, 'photo.html')
+
+
+def yolo(request):
+    if request.method == 'POST':
+        file = request.FILES['file']
+        file_name = file.name
+        file_size = file.size
+
+        # return image with recognized objects
+
+        return HttpResponse('File uploaded successfully: ' + file_name + ' (' + str(file_size) + ' bytes)')
+    return render(request, 'yolov4.html')

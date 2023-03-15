@@ -36,4 +36,6 @@ h1 {
   height: 480px;
   border: 1px solid black;
   border-radius: 5px;
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
 }

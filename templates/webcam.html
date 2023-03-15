@@ -2,7 +2,6 @@
 {% load static %}
 {% block content %}
     <h1>WebCamReader</h1>
-
     <div class="main">
         <div class="video-container">
             <video id="video"></video>
@@ -12,8 +11,7 @@
 
         <div style="display:flex">
             <button id="start-webcam" class="btn btn-danger">Start Video</button>
-            <button id="restart-webcam" class="btn btn-danger" style="display: none;">Back to Video</button>
-            <button id="capture-image" class="btn btn-danger" style="display: none;">Capture&Upload</button>
+            <button id="capture-image" class="btn btn-danger" style="display: none;">Capture&OCR</button>
             <button id="stop-webcam" class="btn btn-danger" style="display: none;">Stop Video</button>
             <button id="home" class="btn btn-danger" style="display: block;">Home</button>
             <form id="image">
@@ -24,10 +22,8 @@
         <div id="result" style="display: none;">
             <h2>Result</h2>
             <div id="result-text"></div>
-            <div id="result-image"></div>
+            <div id="result-image"><img id="img"></div>
         </div>
     </div>
-
     <script src="{% static 'js/webcam.js' %}"></script>
-
 {% endblock content %}

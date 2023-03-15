@@ -37,15 +37,14 @@ captureImageBtn.addEventListener('click', function () {
     xhr.setRequestHeader('X-CSRFToken', csrfToken);
     xhr.onload = function () {
         if (xhr.status === 200) {
-            // Display success message
-            // alert('Upload successful!');
-            // Parse JSON response
+            // Display result
             let response = JSON.parse(xhr.responseText);
             let resultTXT = document.getElementById('result-text');
             resultTXT.innerHTML = response.result;
-            let image = document.createElement('img');
-            image.src = 'data:image/jpeg;base64,' + response.image;
+            // Display image
             let resultIMG = document.getElementById('result-image');
+            let image = document.getElementById('img')
+            image.src = 'data:image/jpeg;base64,' + response.image;
             resultIMG.appendChild(image);
             let resultDiv = document.getElementById('result');
             resultDiv.style.display = 'block';
