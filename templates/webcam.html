@@ -5,17 +5,25 @@
 
     <div class="main">
       <div class="video-container">
-        <video id="video" width="640" height="480"></video>
+        <video id="video"></video>
+        <div id="roi" style="display: none;"></div>
         <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
-        <img id="image" width="640" height="480" style="display: none;">
-        <div class="overlay" style="display: none;"></div>
       </div>
+
       <div style="display:flex">
-          <button id="start-webcam" class="btn btn-danger">Start Webcam</button>
-          <button id="take-picture" class="btn btn-danger">Take Picture</button>
-          <button id="stop-webcam" class="btn btn-danger" style="display: none;">Stop Webcam</button>
+          <button id="start-webcam" class="btn btn-danger">Start Video</button>
+          <button id="restart-webcam" class="btn btn-danger" style="display: none;">Back to Video</button>
+          <button id="capture-image" class="btn btn-danger" style="display: none;">Capture&Upload</button>
+          <button id="stop-webcam" class="btn btn-danger" style="display: none;">Stop Video</button>
+          <button id="home" class="btn btn-danger" style="display: block;">Home</button>
+          <form id="image">
+            {% csrf_token %}
+            <input type="hidden" name="image">
+          </form>
+
       </div>
     </div>
+
     <script src="{% static 'js/webcam.js' %}"></script>
 
 {% endblock content %}

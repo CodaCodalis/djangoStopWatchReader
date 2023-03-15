@@ -7,18 +7,34 @@ h1 {
 }
 
 .main {
+    position: absolute;
     width: 100%;
     margin: auto;
     display: grid;
     justify-content: center;
 }
 
-.overlay {
+#roi {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 140px;
-  height: 40px;
-  background-color: rgba(128, 128, 128, 0.5);
+  width: 280px;
+  height: 80px;
+  border: 1px solid red;
+  border-radius: 5px;
+}
+.video-container {
+    position: relative;
+    justify-content: center;
+    align-items: center;
+}
+
+#video {
+
+  width: 640px;
+  height: 480px;
+  border: 1px solid black;
+  border-radius: 5px;
+
 }

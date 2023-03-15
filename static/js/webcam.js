@@ -1,60 +1,71 @@
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
-const image = document.getElementById('image');
+const roi = document.getElementById('roi');
 const startWebcamBtn = document.getElementById('start-webcam');
-const takePictureBtn = document.getElementById('take-picture');
+const captureImageBtn = document.getElementById('capture-image');
 const stopWebcamBtn = document.getElementById('stop-webcam');
+const homeBtn = document.getElementById('home');
 
-let stream;
-
-/*
 startWebcamBtn.addEventListener('click', function () {
-    navigator.mediaDevices.getUserMedia({video: true})
-        .then(function (mediaStream) {
-            stream = mediaStream;
+    navigator.mediaDevices.getUserMedia({video: true, audio: false})
+        .then(function (stream) {
             video.srcObject = stream;
+            window.stream = stream;
             video.play();
-            video.style.display = 'block';
-            canvas.style.display = 'none';
-            image.style.display = 'none';
         })
         .catch(function (err) {
-            console.log('An error occurred: ' + err);
+            console.log("An error occurred: " + err);
         });
-});
-*/
-
-startWebcamBtn.addEventListener('click', function() {
-  navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-    .then(function(stream) {
-      video.srcObject = stream;
-      window.stream = stream;
-      video.play();
-    })
-    .catch(function(err) {
-      console.log("An error occurred: " + err);
-    });
-  startWebcamBtn.style.display = 'none';
-  stopWebcamBtn.style.display = 'block';
+    startWebcamBtn.style.display = 'none';
+    captureImageBtn.style.display = 'block';
+    stopWebcamBtn.style.display = 'block';
+    roi.style.display = 'block';
+    homeBtn.style.display = 'none';
 });
 
-takePictureBtn.addEventListener('click', function () {
-    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-    video.pause();
-    stream.getTracks().forEach(track => track.stop());
-    video.style.display = 'none';
-    canvas.style.display = 'block';
+captureImageBtn.addEventListener('click', function () {
+    let image = canvas.getContext('2d');
+    image.drawImage(video, 0, 0, canvas.width, canvas.height);
+    let imageData = canvas.toDataURL();
 
-    const existingImage = document.getElementById('captured-image');
-    existingImage.remove();
+    let formData = new FormData();
+    formData.append('image', dataURItoBlob(imageData));
 
-    const newImage = new Image();
-    newImage.setAttribute('id', 'captured-image');
-    newImage.setAttribute('class', 'img-fluid');
-    newImage.setAttribute('src', canvas.toDataURL('image/png'));
-    document.getElementById('captured-image-container').appendChild(newImage);
+    let csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', '/upload_image/', true);
+    xhr.setRequestHeader('X-CSRFToken', csrfToken);
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            // Display success message
+            alert('Upload successful!');
+        } else {
+            // Display error message
+            alert('Upload failed!');
+        }
+    };
+    xhr.send(formData);
 });
-
-stopWebcamBtn.addEventListener('click', function() {
+stopWebcamBtn.addEventListener('click', function () {
     window.location.reload();
 });
+
+homeBtn.addEventListener('click', function () {
+    location.href = '/';
+});
+
+function dataURItoBlob(dataURI) {
+    // convert base64/URLEncoded data component to raw binary data held in a string
+    const byteString = atob(dataURI.split(',')[1]);
+    // separate the MIME type from the actual data
+    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    // write the bytes of the string to an ArrayBuffer
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    // convert ArrayBuffer to Blob object
+    const blob = new Blob([ab], {type: mimeString});
+    return blob;
+}
