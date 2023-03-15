@@ -38,7 +38,14 @@ captureImageBtn.addEventListener('click', function () {
     xhr.onload = function () {
         if (xhr.status === 200) {
             // Display success message
-            alert('Upload successful!');
+            // alert('Upload successful!');
+            // Parse JSON response
+            let response = JSON.parse(xhr.responseText);
+            let resultTXT = document.getElementById('result-text');
+            resultTXT.innerHTML = response.result;
+            let resultIMG = document.getElementById('result-image');
+            let resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
         } else {
             // Display error message
             alert('Upload failed!');
