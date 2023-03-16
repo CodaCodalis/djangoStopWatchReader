@@ -39,3 +39,15 @@ h1 {
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
 }
+
+#results-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 10px;
+}
+
+#results-container img {
+  padding-top: 150px;
+  max-width: 100%;
+  height: auto;
+}

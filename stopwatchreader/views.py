@@ -17,10 +17,6 @@ class WebcamView(TemplateView):
     template_name = "webcam.html"
 
 
-class PhotoView(TemplateView):
-    template_name = "photo.html"
-
-
 class YoloView(TemplateView):
     template_name = "yolov4.html"
 
@@ -49,18 +45,26 @@ def upload_images(request):
     if request.method == 'POST':
         form = ImageUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            images = form.cleaned_data['images']
             results = []
-            for image in images:
-                img1, img2, img3 = process_image(image)
-                # img1_bytes = BytesIO
-                # img1.save(img1_bytes, format='JPEG')
-                # img1_base64 = base64.b64encode(img1_bytes.getvalue()).decode('utf-8')
-                results.append({
-                    'step1': img1,
-                    # 'step2': img2,
-                    # 'step3': img3,
-                })
+            for image in request.FILES.getlist('images'):
+                with Image.open(image) as img:
+                    step_list = process_image(img)
+                    step_data_list = []
+                    for step in step_list:
+                        img_bytes = BytesIO()
+                        step.save(img_bytes, format='JPEG')
+                        img_base64 = base64.b64encode(img_bytes.getvalue()).decode('utf-8')
+                        # img_data = img_bytes.getvalue()
+                        step_data_list.append(img_base64)
+                    orig_image = Image.open(image)
+                    img_bytes = BytesIO()
+                    orig_image.save(img_bytes, format='JPEG')
+                    orig_base64 = base64.b64encode(img_bytes.getvalue()).decode('utf-8')
+                    results.append({
+                        'original': orig_base64,
+                        'steps': step_data_list
+                    })
+
             return JsonResponse({'results': results})
     else:
         form = ImageUploadForm()
