@@ -49,11 +49,21 @@ def analyze(image):
 
 
 def process_image(image):
-    # perform processing steps on the image and return the paths of the processed images
-    # you can use Pillow library for image processing
-    # for example, you can resize the image to 200x200, apply a filter and convert it to grayscale
-    img1 = image
-    img2 = image
-    img3 = image
-    # ... do processing ...
-    return img1, img2, img3
+    image = np.array(image)
+
+    # step1 convert to grayscale
+    step1 = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # step2 some gaussian blur
+    step2 = cv2.GaussianBlur(step1, (1, 1), 0)
+
+    # step3 threshold filter
+    step3 = cv2.threshold(step2, 160, 255, cv2.THRESH_BINARY)[1]
+
+    step1 = Image.fromarray(step1)
+    step2 = Image.fromarray(step2)
+    step3 = Image.fromarray(step3)
+
+    # pack all steps into a list
+    step_list = [step1, step2, step3]
+    return step_list

@@ -2,13 +2,18 @@
 {% load static %}
 
 {% block content %}
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form }}
-        <button type="submit">Upload</button>
-    </form>
+    <div class="main">
+        <h1>Upload Images</h1>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form }}
+            <button type="submit" class="btn btn-danger">Upload</button>
+            <button onclick="location.reload();" class="btn btn-danger">Reset</button>
+            <a href="{% url 'home' %}" id="home" class="btn btn-danger">Home</a>
+        </form>
+    </div>
+    <div id="results-container"></div>
 
-    <div id="results"></div>
-
+    <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
     <script src="{% static 'js/upload_images.js' %}"></script>
 {% endblock %}
