@@ -5,7 +5,8 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.http import JsonResponse, HttpResponse
 from PIL import Image
-from .utils import prepare, analyze
+from .utils import prepare, analyze, process_image
+from .forms import ImageUploadForm
 
 
 class HomePageView(TemplateView):
@@ -44,16 +45,26 @@ def upload_image(request):
         return JsonResponse({'success': False})
 
 
-def upload_file(request):
+def upload_images(request):
     if request.method == 'POST':
-        file = request.FILES['file']
-        file_name = file.name
-        file_size = file.size
-
-        # process image
-
-        return HttpResponse('File uploaded successfully: ' + file_name + ' (' + str(file_size) + ' bytes)')
-    return render(request, 'photo.html')
+        form = ImageUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            images = form.cleaned_data['images']
+            results = []
+            for image in images:
+                img1, img2, img3 = process_image(image)
+                # img1_bytes = BytesIO
+                # img1.save(img1_bytes, format='JPEG')
+                # img1_base64 = base64.b64encode(img1_bytes.getvalue()).decode('utf-8')
+                results.append({
+                    'step1': img1,
+                    # 'step2': img2,
+                    # 'step3': img3,
+                })
+            return JsonResponse({'results': results})
+    else:
+        form = ImageUploadForm()
+    return render(request, 'upload_images.html', {'form': form})
 
 
 def yolo(request):
