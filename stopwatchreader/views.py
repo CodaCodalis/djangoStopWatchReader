@@ -1,11 +1,10 @@
 import base64
 from io import BytesIO
-
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.http import JsonResponse, HttpResponse
 from PIL import Image
-from .utils import prepare, analyze, process_image
+from .utils import prepare, analyze, process_image, yolo_recognize
 from .forms import ImageUploadForm
 
 
@@ -17,14 +16,10 @@ class WebcamView(TemplateView):
     template_name = "webcam.html"
 
 
-class YoloView(TemplateView):
-    template_name = "yolov4.html"
-
-
 def upload_image(request):
     if request.method == 'POST' and request.FILES.get('image'):
         image = request.FILES['image']
-        cropped_image = prepare(image)
+        cropped_image = prepare(Image.open(image))
         text = analyze(cropped_image)
 
         # decode image to base64
@@ -48,7 +43,7 @@ def upload_images(request):
             results = []
             for image in request.FILES.getlist('images'):
                 with Image.open(image) as img:
-                    step_list = process_image(img)
+                    step_list, text = process_image(img)
                     step_data_list = []
                     for step in step_list:
                         img_bytes = BytesIO()
@@ -62,7 +57,8 @@ def upload_images(request):
                     orig_base64 = base64.b64encode(img_bytes.getvalue()).decode('utf-8')
                     results.append({
                         'original': orig_base64,
-                        'steps': step_data_list
+                        'steps': step_data_list,
+                        'text': text
                     })
 
             return JsonResponse({'results': results})
@@ -73,11 +69,31 @@ def upload_images(request):
 
 def yolo(request):
     if request.method == 'POST':
-        file = request.FILES['file']
-        file_name = file.name
-        file_size = file.size
-
-        # return image with recognized objects
-
-        return HttpResponse('File uploaded successfully: ' + file_name + ' (' + str(file_size) + ' bytes)')
-    return render(request, 'yolov4.html')
+        form = ImageUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            results = []
+            for image in request.FILES.getlist('images'):
+                with Image.open(image) as img:
+                    recognized = yolo_recognize(img)
+                    img_bytes = BytesIO()
+                    recognized.save(img_bytes, format='JPEG')
+                    response = HttpResponse(img_bytes.getvalue(), content_type='image/jpeg')
+                    return response
+            '''
+                    recognized_base64 = base64.b64encode(img_bytes.getvalue()).decode('utf-8')
+ 
+                    orig_image = Image.open(image)
+                    img_bytes = BytesIO()
+                    orig_image.save(img_bytes, format='JPEG')
+                    orig_base64 = base64.b64encode(img_bytes.getvalue()).decode('utf-8')
+                    
+                    results.append({
+                        'original': orig_base64,
+                        'recognized': recognized_base64
+                    })
+            
+            return JsonResponse({'results': results})
+            '''
+    else:
+        form = ImageUploadForm()
+    return render(request, 'yolo.html', {'form': form})

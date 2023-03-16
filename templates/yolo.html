@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <h1>YOLOv4</h1>
+    <div class="main">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form }}
+            <button type="submit" class="btn btn-danger">Upload</button>
+            <a href="{% url 'home' %}" id="home" class="btn btn-danger">Home</a>
+        </form>
+    </div>
+    <div id="results-container"></div>
+
+    <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+{% endblock content %}
