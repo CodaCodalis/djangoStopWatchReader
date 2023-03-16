@@ -8,6 +8,7 @@ $('form').submit(function (event) {
         data: formData,
         processData: false,
         contentType: false,
+        dataType: 'json',
         success: function (response) {
             var results = response.results;
             let resultsDiv = document.getElementById('results-container');
@@ -19,21 +20,12 @@ $('form').submit(function (event) {
                 originalImage.src = 'data:image/jpeg;base64,' + result.original;
                 resultsDiv.appendChild(originalImage);
 
-                let stepDataList = result.steps;
-                for (var j = 0; j < stepDataList.length; j++) {
-                    let stepImage = document.createElement('img')
-                    let stepImageId = 'img' + i + '_step' + (j + 1);
-                    stepImage.setAttribute('id', stepImageId);
-                    stepImage.src = 'data:image/jpeg;base64,' + stepDataList[j];
-                    resultsDiv.appendChild(stepImage);
-                }
-
-                let text = result.text;
-                let textSpan = document.createElement('span');
-                let textSpanId = 'text' + i;
-                textSpan.setAttribute('id', textSpanId);
-                textSpan.innerHTML = text;
-                resultsDiv.appendChild(textSpan);
+                let recognized = result.recognized;
+                let recImage = document.createElement('img')
+                let recImageId = 'img' + i + '_rec';
+                recImage.setAttribute('id', recImageId);
+                recImage.src = 'data:image/jpeg;base64,' + recognized;
+                resultsDiv.appendChild(recImage);
             }
         },
         error: function (xhr, status, error) {
