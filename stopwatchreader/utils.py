@@ -1,7 +1,11 @@
+import os
+
 import cv2
 import numpy as np
 from PIL import Image
 import pytesseract
+
+from django_project import settings
 
 
 def prepare(image):
@@ -23,7 +27,7 @@ def prepare(image):
     # some gaussian blur
     img = cv2.GaussianBlur(img, (1, 1), 0)
     # threshold filter
-    img = cv2.threshold(img, 100, 255, cv2.THRESH_BINARY)[1]
+    img = cv2.threshold(img, 160, 255, cv2.THRESH_BINARY)[1]
     # invert if more black than white pixels
     number_of_white_pix = np.sum(img == 255)
     number_of_black_pix = np.sum(img == 0)
@@ -42,3 +46,14 @@ def analyze(image):
     # text = pytesseract.image_to_string(img, lang='osd', config=custom_config)
 
     return text
+
+
+def process_image(image):
+    # perform processing steps on the image and return the paths of the processed images
+    # you can use Pillow library for image processing
+    # for example, you can resize the image to 200x200, apply a filter and convert it to grayscale
+    img1 = image
+    img2 = image
+    img3 = image
+    # ... do processing ...
+    return img1, img2, img3
