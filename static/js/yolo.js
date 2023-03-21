@@ -3,7 +3,7 @@ $('form').submit(function (event) {
     event.preventDefault();
     var formData = new FormData(this);
     $.ajax({
-        url: '/upload_images/',
+        url: '/yolo/',
         type: 'POST',
         data: formData,
         processData: false,
@@ -11,7 +11,7 @@ $('form').submit(function (event) {
         dataType: 'json',
         success: function (response) {
             var results = response.results;
-            let resultsDiv = document.getElementById('results-container');
+            let resultsDiv = document.getElementById('results-container-yolo');
             for (var i = 0; i < results.length; i++) {
                 var result = results[i];
                 let originalImage = document.createElement('img')

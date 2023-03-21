@@ -77,9 +77,10 @@ def yolo(request):
                     recognized = yolo_recognize(img)
                     img_bytes = BytesIO()
                     recognized.save(img_bytes, format='JPEG')
+                    '''
                     response = HttpResponse(img_bytes.getvalue(), content_type='image/jpeg')
                     return response
-            '''
+                    '''
                     recognized_base64 = base64.b64encode(img_bytes.getvalue()).decode('utf-8')
  
                     orig_image = Image.open(image)
@@ -93,7 +94,7 @@ def yolo(request):
                     })
             
             return JsonResponse({'results': results})
-            '''
+
     else:
         form = ImageUploadForm()
     return render(request, 'yolo.html', {'form': form})
